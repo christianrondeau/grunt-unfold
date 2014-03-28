@@ -35,7 +35,7 @@ module.exports = function (grunt, options) {
 	
 	function detectLineBreakString(section, whitespace, tagBegin) {
 		var lineBreak = section.substr(whitespace.length + tagBegin.length, 2);
-		return lineBreak !== '\r\n' ? '\n' : lineBreak;
+		return lineBreak === '\r\n' ? lineBreak : '\n';
 	}
 	
 	function getTypeDefinition(type) {
@@ -65,10 +65,10 @@ module.exports = function (grunt, options) {
 	}
 
 	that.processSection = function (dir, section) {
-		var whitespace = section.match(/^[\t ]*/)[0];
+		var indentation = section.match(/^[\t ]*/)[0];
 		var tagBegin = section.match(expressions.tagBegin)[0];
 		var tagEnd = section.match(expressions.tagEnd)[0];
-		var lineBreak = detectLineBreakString(section, whitespace, tagBegin);
+		var lineBreak = detectLineBreakString(section, indentation, tagBegin);
 		var type = getTypeFromTagBegin(tagBegin);
 		var typeDefinition = getTypeDefinition(type);
 		var pathFilter = getPathFilterFromTagBegin(tagBegin, type);
@@ -79,7 +79,7 @@ module.exports = function (grunt, options) {
 		lines.push(tagEnd);
 
 		return _.map(lines, function (line) {
-			return whitespace + line;
+			return indentation + line;
 		}).join(lineBreak);
 	};
 

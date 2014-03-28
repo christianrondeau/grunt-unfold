@@ -39,7 +39,6 @@ You can define a custom template for existing and custom types. You need to defi
 grunt.initConfig({
   unfold: {
     options: {
-      root: 'path/to/www/root',
       templates: {
         'async-js': {
 		  template: '<script src="$PATH$" type="text/javascript" async></script>'

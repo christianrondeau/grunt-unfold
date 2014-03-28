@@ -6,8 +6,9 @@
  * Licensed under the MIT license.
  */
 
+'use strict';
+
 module.exports = function (grunt) {
-	'use strict';
 
 	grunt.loadTasks('tasks');
 	require('load-grunt-tasks')(grunt);
