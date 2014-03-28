@@ -126,7 +126,7 @@ describe('unfold', function () {
 		});
 
 		it('should use custom templates', function () {
-			options.types['js'].template = 'PATH: $PATH$';
+			options.types.js.template = 'PATH: $PATH$';
 			grunt.file.expand = sandbox.stub().returns(['scripts/script1.js']);
 			
 			var content = '<!-- unfold:js scripts/*.js -->\n<!-- /unfold -->';
@@ -136,7 +136,7 @@ describe('unfold', function () {
 		});
 
 		it('should support custom types', function () {
-			options.types['img'] = {
+			options.types.img = {
 				template: '<img src="$PATH$" />'
 			};
 			grunt.file.expand = sandbox.stub().returns(['images/sample.png']);

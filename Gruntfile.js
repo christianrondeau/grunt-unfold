@@ -33,7 +33,7 @@ module.exports = function (grunt) {
 			options: {
 				root: 'test/fixtures'
 			},
-			files: ['test/fixtures/*.html']
+			files: ['test/fixtures/**/*.html']
 		},
 
 		mochaTest: {

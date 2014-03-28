@@ -21,16 +21,8 @@ expressions.section = new RegExp(expressions.whitespace.source + expressions.tag
 
 module.exports = function (grunt, options) {
 	var that = {};
-
-	that.processSection = function (section) {
-		var whitespace = section.match(/^[\t ]*/)[0];
-		var tagBegin = section.match(expressions.tagBegin)[0];
-		var tagEnd = section.match(expressions.tagEnd)[0];
-		var lineBreak = section.substr(whitespace.length + tagBegin.length, 2);
-		if (lineBreak !== '\r\n') {
-			lineBreak = '\n';
-		}
-
+	
+	function getTypeFromTagBegin(tagBegin) {
 		var indexOfType = tagBegin.indexOf('unfold:') + 7;
 		var type = tagBegin.substring(indexOfType, tagBegin.indexOf(' ', indexOfType));
 		
@@ -38,19 +30,51 @@ module.exports = function (grunt, options) {
 			throw new Error('"unfold" cannot be a type');
 		}
 		
+		return type;
+	}
+	
+	function detectLineBreakString(section, whitespace, tagBegin) {
+		var lineBreak = section.substr(whitespace.length + tagBegin.length, 2);
+		return lineBreak !== '\r\n' ? '\n' : lineBreak;
+	}
+	
+	function getTypeDefinition(type) {
 		var typeDefinition = options.types[type];
 		if(!typeDefinition) {
 			throw new Error('No type defined for "' + type + '"');
 		}
-		
-		var pathFilter = tagBegin.substring(tagBegin.indexOf(type) + type.length, tagBegin.indexOf('-->')).trim();
-		
-		var lines = [tagBegin];
+		if(!typeDefinition.template) {
+			throw new Error('No template defined for type "' + type + '"');
+		}
+		return typeDefinition;
+	}
+	
+	function getPathFilterFromTagBegin(tagBegin, type) {
+		return tagBegin.substring(tagBegin.indexOf(type) + type.length, tagBegin.indexOf('-->')).trim();
+	}
+	
+	function buildLinesListFromGlobbingPattern(pathFilter, typeDefinition) {
+		var lines = [];
 		grunt.file.expand({
 			cwd: options.root
 		}, pathFilter).forEach(function (path) {
 			lines.push(typeDefinition.template.replace('$PATH$', path));
 		});
+		return lines;
+	}
+
+	that.processSection = function (section) {
+		var whitespace = section.match(/^[\t ]*/)[0];
+		var tagBegin = section.match(expressions.tagBegin)[0];
+		var tagEnd = section.match(expressions.tagEnd)[0];
+		var lineBreak = detectLineBreakString(section, whitespace, tagBegin);
+		var type = getTypeFromTagBegin(tagBegin);
+		var typeDefinition = getTypeDefinition(type);
+		var pathFilter = getPathFilterFromTagBegin(tagBegin, type);
+		
+		var lines = [];
+		lines.push(tagBegin);
+		lines = lines.concat(buildLinesListFromGlobbingPattern(pathFilter, typeDefinition));
 		lines.push(tagEnd);
 
 		return _.map(lines, function (line) {
