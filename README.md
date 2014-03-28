@@ -3,7 +3,6 @@
 > Inserts script tags based on a folder path or file pattern
 
 ## Getting Started
-This plugin requires Grunt `~0.4.0`
 
 If you haven't used [Grunt](http://gruntjs.com/) before, be sure to check out the [Getting Started](http://gruntjs.com/getting-started) guide, as it explains how to create a [Gruntfile](http://gruntjs.com/sample-gruntfile) as well as install and use Grunt plugins. Once you're familiar with that process, you may install this plugin with this command:
 
@@ -24,19 +23,11 @@ _Run this task with the `grunt unfold` command._
 
 This will detect `<!-- unfold:TYPE PATH --> ... <!-- /unfold -->` blocks in your html files and rebuild the list of script tags from the matching files.
 
-* **PATH** is a globbing pattern, such as *.js, scripts/**/*.js etc.
+* **PATH** is a globbing pattern, such as \*.js, scripts/\*\*/\*.js etc.
 * **TYPE** defines the tag template to insert;
-** **js** Inserts a `<script src="foo.js"></script>`
-** **css** Inserts a `<link rel="stylesheet" href="foo.cs" />`
-** **img** Inserts a `<img src="foo.png" />`
-
-```js
-grunt.initConfig({
-  unfold: {
-    files: ['index.html'] // Which html files to process
-  },
-})
-```
+  * **js** inserts a `<script src="foo.js"></script>`
+  * **css** inserts a `<link rel="stylesheet" href="foo.cs" />`
+  * **img** inserts a `<img src="foo.png" />`
 
 ### Options
 
@@ -60,24 +51,38 @@ grunt.initConfig({
 })
 ```
 
+### Usage Example
 
+#### In "Gruntfile.js"
+
+```js
+grunt.initConfig({
+  unfold: {
+    files: ['index.html'] // Which html files to process
+  },
+})
 ```
 
-### Usage Example
+#### In "index.html"
 
 ```html
 <html>
   <head>
-    <!-- unfold:js scripts/*.js -->
-	<script src="scripts/this-will-be-regenerated.js"></script>
+    <!-- unfold:css style/*.css -->
+	This will be overwritten
 	<!-- /unfold -->
   </head>
+  <body>
+    <!-- unfold:js scripts/*.js -->
+	This will be overwritten
+	<!-- /unfold -->
+  </body>
+</html>
 ```
 
-## Upcoming features:
+## License
 
-* Ability to provide custom templates
-* Ability to specify css lists and custom lists (e.g.: `{ type: 'custom', template: '<custom>$1</custom>' }` would match `<!-- unfold:custom *.txt -->`)
+Copyright (c) 2014 Christian Rondeau. Licensed under the MIT license.
 
 ## Thanks
 
