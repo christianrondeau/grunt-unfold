@@ -112,6 +112,14 @@ describe('unfold', function () {
 			var expected = '<html>\n<head>\n!!REPLACED!!\n</head>\n</html>';
 			expect(unfold.processContent('', content)).to.equal(expected);
 		});
+		
+		it('should replace multiple sections in the same file', function () {
+			sandbox.stub(unfold, 'processSection').returns('!!REPLACED!!');
+
+			var content = '<!-- unfold:js * -->\nSECTION 1\n<!-- /unfold -->\n<!-- unfold:js * -->\nSECTION 2\n<!-- /unfold -->';
+			var expected = '!!REPLACED!!\n!!REPLACED!!';
+			expect(unfold.processContent('', content)).to.equal(expected);
+		});
 
 		it('should provide the file directory to processSection', function () {
 			sandbox.stub(unfold, 'processSection').returns('');

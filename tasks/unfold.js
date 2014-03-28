@@ -13,7 +13,7 @@ var _ = require('lodash');
 var expressions = {
 	whitespace: /[\t ]*/,
 	tagBegin: /<!--[ \t]*unfold:\w+ .*(?=-->)[ \t]*-->/,
-	tagContent: /[\s\S]*/,
+	tagContent: /[\s\S]*?/,
 	tagEnd: /<!--[ \t]*\/unfold[ \t]*-->/
 };
 
