@@ -13,9 +13,11 @@ module.exports = function(grunt) {
 
 	grunt.registerMultiTask('unfold', 'Inserts script tags based on a folder path or file pattern', function() {
 
-		//var options = this.options({});
+		var options = this.options({
+			root: ''
+		});
 		
-		unfold.processFiles(this.files);
+		unfold(grunt, options).processFiles(this.files);
 
 	});
 

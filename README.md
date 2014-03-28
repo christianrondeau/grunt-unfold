@@ -27,8 +27,10 @@ This will detect `<!-- unfold:js scripts/*.js --> ... <!-- /unfold --> blocks in
 ```js
 grunt.initConfig({
   unfold: {
-      // Which html files to process
-      files: ['index.html']
+      {
+	      root: 'path/to/www/root'
+	  },
+      files: ['index.html'] // Which html files to process
   },
 })
 ```
@@ -43,6 +45,11 @@ grunt.initConfig({
 	<!-- /unfold -->
   </head>
 ```
+
+## Upcoming features:
+
+* Ability to provide custom templates
+* Ability to specify css lists and custom lists (e.g.: `{ type: 'custom', template: '<custom>$1</custom>' }` would match `<!-- unfold:custom *.txt -->`)
 
 ## Thanks
 

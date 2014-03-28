@@ -30,7 +30,10 @@ module.exports = function (grunt) {
 		},
 
 		unfold: {
-			files: ['test/fixtures/sample.html']
+			options: {
+				root: 'test/fixtures'
+			},
+			files: ['test/fixtures/*.html']
 		},
 
 		mochaTest: {
