@@ -16,13 +16,18 @@ describe('unfold', function () {
 		grunt = {
 			file: {},
 			log: {
-				write: sandbox.spy(),
+				writeln: sandbox.spy(),
 				warn: sandbox.spy()
 			}
 		};
 
 		options = {
-			root: 'www'
+			root: 'www',
+			types: {
+				js: {
+					template: '<script src="$PATH$"></script>'
+				}
+			}
 		};
 
 		unfold = unfoldCtor(grunt, options);
@@ -116,6 +121,16 @@ describe('unfold', function () {
 			
 			var content = '\t<!-- unfold:js scripts/*.js -->\r\n\t<script src="obsolete.js"></script>\r\n\t<!-- /unfold -->';
 			var expected = '\t<!-- unfold:js scripts/*.js -->\r\n\t<script src="scripts/script1.js"></script>\r\n\t<script src="scripts/script2.js"></script>\r\n\t<!-- /unfold -->';
+
+			expect(unfold.processSection(content)).to.equal(expected);
+		});
+
+		it('should use custom templates', function () {
+			options.types['js'].template = 'PATH: $PATH$';
+			grunt.file.expand = sandbox.stub().returns(['scripts/script1.js']);
+			
+			var content = '<!-- unfold:js scripts/*.js -->\n<!-- /unfold -->';
+			var expected = '<!-- unfold:js scripts/*.js -->\nPATH: scripts/script1.js\n<!-- /unfold -->';
 
 			expect(unfold.processSection(content)).to.equal(expected);
 		});

@@ -32,14 +32,13 @@ module.exports = function (grunt, options) {
 		}
 
 		var pathFilter = tagBegin.substring(tagBegin.indexOf('unfold:js') + 9, tagBegin.indexOf('-->')).trim();
-
 		
 		var lines = [tagBegin];
 		grunt.file.expand({
 			cwd: options.root
 		}, pathFilter).forEach(function (path) {
 			//TODO: Provide a template dictionary (one for js, one for css etc.)
-			lines.push('<script src="' + path + '"></script>');
+			lines.push(options.types['js'].template.replace('$PATH$', path));
 		});
 		lines.push(tagEnd);
 

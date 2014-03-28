@@ -22,17 +22,42 @@ grunt.loadNpmTasks('grunt-unfold');
 ### Overview
 _Run this task with the `grunt unfold` command._
 
-This will detect `<!-- unfold:js scripts/*.js --> ... <!-- /unfold --> blocks in your index.html and rebuild the list of script tags from the matching files.
+This will detect `<!-- unfold:js scripts/*.js --> ... <!-- /unfold -->` blocks in your index.html and rebuild the list of script tags from the matching files.
 
 ```js
 grunt.initConfig({
   unfold: {
-      {
-	      root: 'path/to/www/root'
-	  },
-      files: ['index.html'] // Which html files to process
+    options: {
+      root: 'path/to/www/root'
+    },
+    files: ['index.html'] // Which html files to process
   },
 })
+```
+
+### Options
+
+#### templates
+
+You can define a custom template for existing and custom types. You need to define the `$PATH$` variable in the template where you want the source path to be inserted.
+
+```js
+grunt.initConfig({
+  unfold: {
+    options: {
+      root: 'path/to/www/root',
+      templates: {
+        js: {
+		  template: 'script src="$PATH$" type="text/javascript"></script>'
+		}
+      }
+    },
+    files: ['index.html']
+  },
+})
+```
+
+
 ```
 
 ### Usage Example
