@@ -8,12 +8,17 @@
 
 'use strict';
 
-module.exports = function(grunt) {
+var _ = require('lodash');
+var that = {};
 
-	grunt.registerMultiTask('unfold', 'Inserts script tags based on a folder path or file pattern', function() {
-
-		throw new Error('Not Implemented');
-
-	});
-
+that.processFile = function(file) {
+	
 };
+
+that.processFiles = function (files) {
+	 _.forEach(files, function(file) {
+		 that.processFile(file);
+	 });
+};
+
+module.exports = that;

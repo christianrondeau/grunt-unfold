@@ -15,7 +15,7 @@ module.exports = function (grunt) {
 	grunt.initConfig({
 		jshint: {
 			options: {
-				jshintrc: '.jshintrc',
+				jshintrc: '.jshintrc'
 			},
 			tasks: [
 				'Gruntfile.js',
@@ -33,18 +33,36 @@ module.exports = function (grunt) {
 			files: ['test/fixtures/sample.html']
 		},
 
-		mocha: {
-			tests: ['test/spec/*-spec.js']
+		mochaTest: {
+			test: {
+				options: {
+					reporter: 'spec',
+					clearRequireCache: true,
+					growl: true
+				},
+				src: ['test/spec/*-spec.js']
+			}
 		},
+
+		watch: {
+			test: {
+				options: {
+					//atBegin: true,
+					spawn: false,
+				},
+				files: '**/*.js',
+				tasks: ['mochaTest']
+			}
+		}
 
 	});
 
 	grunt.registerTask('test', [
 		'jshint',
 		'unfold',
-		'mocha'
+		'mochaTest'
 	]);
-	
+
 	grunt.registerTask('default', [
 		'test'
 	]);
