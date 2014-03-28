@@ -22,7 +22,7 @@ describe('unfold', function () {
 		};
 
 		options = {
-			root: 'www',
+			root: '',
 			types: {
 				js: {
 					template: '<script src="$PATH$"></script>'
@@ -131,6 +131,18 @@ describe('unfold', function () {
 			
 			var content = '<!-- unfold:js scripts/*.js -->\n<!-- /unfold -->';
 			var expected = '<!-- unfold:js scripts/*.js -->\nPATH: scripts/script1.js\n<!-- /unfold -->';
+
+			expect(unfold.processSection(content)).to.equal(expected);
+		});
+
+		it('should support custom types', function () {
+			options.types['img'] = {
+				template: '<img src="$PATH$" />'
+			};
+			grunt.file.expand = sandbox.stub().returns(['images/sample.png']);
+			
+			var content = '<!-- unfold:img images/**/*.png -->\n<!-- /unfold -->';
+			var expected = '<!-- unfold:img images/**/*.png -->\n<img src="images/sample.png" />\n<!-- /unfold -->';
 
 			expect(unfold.processSection(content)).to.equal(expected);
 		});

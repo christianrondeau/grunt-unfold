@@ -12,7 +12,7 @@ var _ = require('lodash');
 
 var expressions = {
 	whitespace: /[\t ]*/,
-	tagBegin: /<!--[ \t]*unfold:js .*(?=-->)[ \t]*-->/,
+	tagBegin: /<!--[ \t]*unfold:\w+ .*(?=-->)[ \t]*-->/,
 	tagContent: /[\s\S]*/,
 	tagEnd: /<!--[ \t]*\/unfold[ \t]*-->/
 };
@@ -31,14 +31,25 @@ module.exports = function (grunt, options) {
 			lineBreak = '\n';
 		}
 
-		var pathFilter = tagBegin.substring(tagBegin.indexOf('unfold:js') + 9, tagBegin.indexOf('-->')).trim();
+		var indexOfType = tagBegin.indexOf('unfold:') + 7;
+		var type = tagBegin.substring(indexOfType, tagBegin.indexOf(' ', indexOfType));
+		
+		if(type === 'unfold') {
+			throw new Error('"unfold" cannot be a type');
+		}
+		
+		var typeDefinition = options.types[type];
+		if(!typeDefinition) {
+			throw new Error('No type defined for "' + type + '"');
+		}
+		
+		var pathFilter = tagBegin.substring(tagBegin.indexOf(type) + type.length, tagBegin.indexOf('-->')).trim();
 		
 		var lines = [tagBegin];
 		grunt.file.expand({
 			cwd: options.root
 		}, pathFilter).forEach(function (path) {
-			//TODO: Provide a template dictionary (one for js, one for css etc.)
-			lines.push(options.types['js'].template.replace('$PATH$', path));
+			lines.push(typeDefinition.template.replace('$PATH$', path));
 		});
 		lines.push(tagEnd);
 

@@ -22,7 +22,13 @@ grunt.loadNpmTasks('grunt-unfold');
 ### Overview
 _Run this task with the `grunt unfold` command._
 
-This will detect `<!-- unfold:js scripts/*.js --> ... <!-- /unfold -->` blocks in your index.html and rebuild the list of script tags from the matching files.
+This will detect `<!-- unfold:TYPE PATH --> ... <!-- /unfold -->` blocks in your html files and rebuild the list of script tags from the matching files.
+
+* **PATH** is a globbing pattern, such as *.js, scripts/**/*.js etc.
+* **TYPE** defines the tag template to insert;
+** **js** Inserts a `<script src="foo.js"></script>`
+** **css** Inserts a `<link rel="stylesheet" href="foo.cs" />`
+** **img** Inserts a `<img src="foo.png" />`
 
 ```js
 grunt.initConfig({
