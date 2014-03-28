@@ -14,7 +14,10 @@ describe('unfold', function () {
 		sandbox = sinon.sandbox.create();
 
 		grunt = {
-			file: {},
+			file: {
+				read: sandbox.stub(),
+				write: sandbox.stub()
+			},
 			log: {
 				writeln: sandbox.spy(),
 				warn: sandbox.spy()
@@ -22,7 +25,6 @@ describe('unfold', function () {
 		};
 
 		options = {
-			root: '',
 			types: {
 				js: {
 					template: '<script src="$PATH$"></script>'
@@ -56,8 +58,7 @@ describe('unfold', function () {
 	describe('processFile', function () {
 
 		beforeEach(function () {
-			grunt.file.read = sandbox.stub().withArgs('filepath').returns('original content');
-			grunt.file.write = sandbox.spy();
+			grunt.file.read.returns('original content');
 		});
 
 		it('not write the file if it did not change', function () {
@@ -71,9 +72,18 @@ describe('unfold', function () {
 		it('overwrite the file if it was modified', function () {
 			sandbox.stub(unfold, 'processContent').returns('new content');
 
-			unfold.processFile('filepath');
+			unfold.processFile('path/to/file.html');
 
-			expect(grunt.file.write).to.have.been.calledWith('filepath', 'new content');
+			expect(grunt.file.write).to.have.been.calledWith('path/to/file.html', 'new content');
+		});
+
+		it('provides the file folder to processContent', function () {
+			sandbox.stub(unfold, 'processContent');
+			grunt.file.read.withArgs('path/to/file.html').returns('file content');
+
+			unfold.processFile('path/to/file.html');
+
+			expect(unfold.processContent).to.have.been.calledWith('path/to', 'file content');
 		});
 
 	});
@@ -84,7 +94,7 @@ describe('unfold', function () {
 			var content = '<html>\r\n<head>\r\nNothing interesting here...\r\n</head>\r\n</html>';
 			sandbox.stub(unfold, 'processSection').returns(content);
 
-			expect(unfold.processContent(content)).to.equal(content);
+			expect(unfold.processContent('', content)).to.equal(content);
 		});
 
 		it('should replace sections with processed result (with tabs, single line, windows breaks)', function () {
@@ -92,7 +102,7 @@ describe('unfold', function () {
 
 			var content = '<html>\r\n<head>\r\n\t<!-- unfold:js path/to/something.js --><!-- THIS WILL BE REMOVED --><!-- /unfold -->\r\n</head>\r\n</html>';
 			var expected = '<html>\r\n<head>\r\n!!REPLACED!!\r\n</head>\r\n</html>';
-			expect(unfold.processContent(content)).to.equal(expected);
+			expect(unfold.processContent('', content)).to.equal(expected);
 		});
 
 		it('should replace sections with processed result (with spaces, multiple lines, no spaces in comment, linux breaks)', function () {
@@ -100,7 +110,16 @@ describe('unfold', function () {
 
 			var content = '<html>\n<head>\n  <!--unfold:js *.js-->\n  <script src="something.js"></script>\n  <!--/unfold-->\n</head>\n</html>';
 			var expected = '<html>\n<head>\n!!REPLACED!!\n</head>\n</html>';
-			expect(unfold.processContent(content)).to.equal(expected);
+			expect(unfold.processContent('', content)).to.equal(expected);
+		});
+
+		it('should provide the file directory to processSection', function () {
+			sandbox.stub(unfold, 'processSection').returns('');
+
+			var content = '<!--unfold:js *-->\n<!--/unfold-->';
+			unfold.processContent('path', content);
+			
+			expect(unfold.processSection).to.have.been.calledWith('path', content);
 		});
 
 	});
@@ -113,7 +132,7 @@ describe('unfold', function () {
 			var content = '<!--unfold:js *.js-->\nPREVIOUS CONTENT\n<!--/unfold-->';
 			var expected = '<!--unfold:js *.js-->\n<!--/unfold-->';
 
-			expect(unfold.processSection(content)).to.equal(expected);
+			expect(unfold.processSection('', content)).to.equal(expected);
 		});
 
 		it('should replace previous scripts by filter result (with tabs)', function () {
@@ -122,7 +141,7 @@ describe('unfold', function () {
 			var content = '\t<!-- unfold:js scripts/*.js -->\r\n\t<script src="obsolete.js"></script>\r\n\t<!-- /unfold -->';
 			var expected = '\t<!-- unfold:js scripts/*.js -->\r\n\t<script src="scripts/script1.js"></script>\r\n\t<script src="scripts/script2.js"></script>\r\n\t<!-- /unfold -->';
 
-			expect(unfold.processSection(content)).to.equal(expected);
+			expect(unfold.processSection('', content)).to.equal(expected);
 		});
 
 		it('should use custom templates', function () {
@@ -132,7 +151,7 @@ describe('unfold', function () {
 			var content = '<!-- unfold:js scripts/*.js -->\n<!-- /unfold -->';
 			var expected = '<!-- unfold:js scripts/*.js -->\nPATH: scripts/script1.js\n<!-- /unfold -->';
 
-			expect(unfold.processSection(content)).to.equal(expected);
+			expect(unfold.processSection('', content)).to.equal(expected);
 		});
 
 		it('should support custom types', function () {
@@ -144,7 +163,7 @@ describe('unfold', function () {
 			var content = '<!-- unfold:img images/**/*.png -->\n<!-- /unfold -->';
 			var expected = '<!-- unfold:img images/**/*.png -->\n<img src="images/sample.png" />\n<!-- /unfold -->';
 
-			expect(unfold.processSection(content)).to.equal(expected);
+			expect(unfold.processSection('', content)).to.equal(expected);
 		});
 
 	});

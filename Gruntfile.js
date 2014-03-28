@@ -30,9 +30,6 @@ module.exports = function (grunt) {
 		},
 
 		unfold: {
-			options: {
-				root: 'test/fixtures'
-			},
 			files: ['test/fixtures/**/*.html']
 		},
 

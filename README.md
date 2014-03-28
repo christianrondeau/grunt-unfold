@@ -33,9 +33,6 @@ This will detect `<!-- unfold:TYPE PATH --> ... <!-- /unfold -->` blocks in your
 ```js
 grunt.initConfig({
   unfold: {
-    options: {
-      root: 'path/to/www/root'
-    },
     files: ['index.html'] // Which html files to process
   },
 })
@@ -53,8 +50,8 @@ grunt.initConfig({
     options: {
       root: 'path/to/www/root',
       templates: {
-        js: {
-		  template: 'script src="$PATH$" type="text/javascript"></script>'
+        'async-js': {
+		  template: '<script src="$PATH$" type="text/javascript" async></script>'
 		}
       }
     },

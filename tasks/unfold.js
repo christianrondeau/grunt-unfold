@@ -53,17 +53,18 @@ module.exports = function (grunt, options) {
 		return tagBegin.substring(tagBegin.indexOf(type) + type.length, tagBegin.indexOf('-->')).trim();
 	}
 	
-	function buildLinesListFromGlobbingPattern(pathFilter, typeDefinition) {
+	function buildLinesListFromGlobbingPattern(dir, pathFilter, typeDefinition) {
 		var lines = [];
+
 		grunt.file.expand({
-			cwd: options.root
+			cwd: dir
 		}, pathFilter).forEach(function (path) {
 			lines.push(typeDefinition.template.replace('$PATH$', path));
 		});
 		return lines;
 	}
 
-	that.processSection = function (section) {
+	that.processSection = function (dir, section) {
 		var whitespace = section.match(/^[\t ]*/)[0];
 		var tagBegin = section.match(expressions.tagBegin)[0];
 		var tagEnd = section.match(expressions.tagEnd)[0];
@@ -74,7 +75,7 @@ module.exports = function (grunt, options) {
 		
 		var lines = [];
 		lines.push(tagBegin);
-		lines = lines.concat(buildLinesListFromGlobbingPattern(pathFilter, typeDefinition));
+		lines = lines.concat(buildLinesListFromGlobbingPattern(dir, pathFilter, typeDefinition));
 		lines.push(tagEnd);
 
 		return _.map(lines, function (line) {
@@ -82,15 +83,19 @@ module.exports = function (grunt, options) {
 		}).join(lineBreak);
 	};
 
-	that.processContent = function (content) {
+	that.processContent = function (dir, content) {
 		return content.replace(expressions.section, function (section) {
-			return that.processSection(section);
+			return that.processSection(dir, section);
 		});
 	};
 
 	that.processFile = function (src) {
 		var content = grunt.file.read(src);
-		var result = that.processContent(content);
+		
+		var dir = src.substring(0, src.lastIndexOf('/'));
+		
+		var result = that.processContent(dir, content);
+		
 		if (content !== result) {
 			grunt.file.write(src, result);
 		}
