@@ -1,14 +1,14 @@
 {
   "name": "grunt-unfold",
   "description": "Inserts script tags based on a folder path or file pattern",
-  "version": "0.0.1",
-  "homepage": "http://github.com/christian.rondeau/grunt-unfold",
+  "version": "0.0.2",
+  "homepage": "http://github.com/christianrondeau/grunt-unfold",
   "contributors": [
     "Christian Rondeau <christian.rondeau@gmail.com>"
   ],
   "repository": {
     "type": "git",
-    "url": "github.com:christian.rondeau/grunt-unfold.git"
+    "url": "github.com:christianrondeau/grunt-unfold.git"
   },
   "main": "tasks/unfold.js",
   "engines": {
