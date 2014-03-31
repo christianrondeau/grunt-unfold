@@ -12,7 +12,7 @@
   },
   "main": "tasks/unfold.js",
   "engines": {
-    "node": ">= 0.10.25"
+    "node": ">= 0.8.0"
   },
   "scripts": {
     "test": "grunt test"
