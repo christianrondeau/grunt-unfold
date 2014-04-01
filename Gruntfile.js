@@ -29,9 +29,32 @@ module.exports = function (grunt) {
 				src: ['test/spec/*.js']
 			}
 		},
+		
+		clean: ['test/current'],
+		
+		copy: {
+			testFixtures: {
+				expand: true,
+				cwd: 'test/fixtures',
+				src: '**/*.*',
+				dest: 'test/current',
+			}
+		},
 
 		unfold: {
-			files: ['test/fixtures/**/*.html']
+			overwriteSelf: {
+				src: 'test/current/**/*.html'
+			},
+			writeAnotherFolder: {
+				expand: true,
+				cwd: 'test/current',
+				src: 'sample.html',
+				dest: 'test/current/dist/'
+			},
+			writeAnotherFile: {
+				src: 'test/current/sample.html',
+				dest: 'test/current/sample-dist.html'
+			}
 		},
 
 		mochaTest: {
@@ -57,11 +80,19 @@ module.exports = function (grunt) {
 		}
 
 	});
+	
+	grunt.registerTask('test-real', [
+		'clean',
+		'copy',
+		'unfold:writeAnotherFile',
+		'unfold:writeAnotherFolder',
+		'unfold:overwriteSelf'
+	]);
 
 	grunt.registerTask('test', [
 		'jshint',
-		'unfold',
-		'mochaTest'
+		'mochaTest',
+		'test-real'
 	]);
 
 	grunt.registerTask('default', [

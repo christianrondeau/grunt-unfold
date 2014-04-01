@@ -9,6 +9,7 @@
 'use strict';
 
 var _ = require('lodash');
+var path = require('path');
 
 var expressions = {
 	whitespace: /[\t ]*/,
@@ -21,38 +22,38 @@ expressions.section = new RegExp(expressions.whitespace.source + expressions.tag
 
 module.exports = function (grunt, options) {
 	var that = {};
-	
+
 	function getTypeFromTagBegin(tagBegin) {
 		var indexOfType = tagBegin.indexOf('unfold:') + 7;
 		var type = tagBegin.substring(indexOfType, tagBegin.indexOf(' ', indexOfType));
-		
-		if(type === 'unfold') {
+
+		if (type === 'unfold') {
 			throw new Error('"unfold" cannot be a type');
 		}
-		
+
 		return type;
 	}
-	
+
 	function detectLineBreakString(section, whitespace, tagBegin) {
 		var lineBreak = section.substr(whitespace.length + tagBegin.length, 2);
 		return lineBreak === '\r\n' ? lineBreak : '\n';
 	}
-	
+
 	function getTypeDefinition(type) {
 		var typeDefinition = options.types[type];
-		if(!typeDefinition) {
+		if (!typeDefinition) {
 			throw new Error('No type defined for "' + type + '"');
 		}
-		if(!typeDefinition.template) {
+		if (!typeDefinition.template) {
 			throw new Error('No template defined for type "' + type + '"');
 		}
 		return typeDefinition;
 	}
-	
+
 	function getPathFilterFromTagBegin(tagBegin, type) {
 		return tagBegin.substring(tagBegin.indexOf(type) + type.length, tagBegin.indexOf('-->')).trim();
 	}
-	
+
 	function buildLinesListFromGlobbingPattern(dir, pathFilter, typeDefinition) {
 		var lines = [];
 
@@ -72,7 +73,7 @@ module.exports = function (grunt, options) {
 		var type = getTypeFromTagBegin(tagBegin);
 		var typeDefinition = getTypeDefinition(type);
 		var pathFilter = getPathFilterFromTagBegin(tagBegin, type);
-		
+
 		var lines = [];
 		lines.push(tagBegin);
 		lines = lines.concat(buildLinesListFromGlobbingPattern(dir, pathFilter, typeDefinition));
@@ -89,15 +90,18 @@ module.exports = function (grunt, options) {
 		});
 	};
 
-	that.processFile = function (src) {
+	that.processFile = function (src, dest) {
 		var content = grunt.file.read(src);
-		
+
 		var dir = src.substring(0, src.lastIndexOf('/'));
-		
+
 		var result = that.processContent(dir, content);
-		
-		if (content !== result) {
-			grunt.file.write(src, result);
+
+		if (content !== result || src !== dest) {
+			grunt.file.write(dest, result);
+			grunt.log.writeln(' Written into "' + dest + '"');
+		} else {
+			grunt.log.writeln(' Not written (no changes)');
 		}
 	};
 
@@ -107,8 +111,16 @@ module.exports = function (grunt, options) {
 				if (!grunt.file.exists(src)) {
 					grunt.log.warn('File "' + src + '" not found.');
 				} else {
-					grunt.log.writeln('Processing "' + src + '"');
-					that.processFile(src);
+					grunt.log.write('Processing "' + src + '"... ');
+					
+					var dest = file.dest;
+					if (!file.dest) {
+						dest = src;
+					} else if (grunt.file.isDir(dest)) {
+						dest = path.join(dest, src);
+					}
+					
+					that.processFile(src, dest);
 				}
 			});
 		});

@@ -16,9 +16,12 @@ describe('unfold', function () {
 		grunt = {
 			file: {
 				read: sandbox.stub(),
-				write: sandbox.stub()
+				write: sandbox.stub(),
+				exists: sandbox.stub(),
+				isDir: sandbox.stub()
 			},
 			log: {
+				write: sandbox.spy(),
 				writeln: sandbox.spy(),
 				warn: sandbox.spy()
 			}
@@ -43,7 +46,7 @@ describe('unfold', function () {
 
 		it('should process every file', function () {
 			sandbox.stub(unfold, 'processFile');
-			grunt.file.exists = sandbox.stub().returns(true);
+			grunt.file.exists.returns(true);
 
 			unfold.processFiles([
 				{ src: ['file1.html'] },
@@ -51,6 +54,40 @@ describe('unfold', function () {
 			]);
 
 			expect(unfold.processFile).to.have.callCount(3);
+		});
+
+		it('should provide the src file when dest is not specified', function () {
+			sandbox.stub(unfold, 'processFile');
+			grunt.file.exists.returns(true);
+
+			unfold.processFiles([
+				{ src: ['file1.html'] }
+			]);
+
+			expect(unfold.processFile).to.have.been.calledWith('file1.html', 'file1.html');
+		});
+
+		it('should provide the dest file that was specified', function () {
+			sandbox.stub(unfold, 'processFile');
+			grunt.file.exists.returns(true);
+
+			unfold.processFiles([
+				{ src: ['file1.html'], dest: 'file2.html' }
+			]);
+
+			expect(unfold.processFile).to.have.been.calledWith('file1.html', 'file2.html');
+		});
+
+		it('should provide a dest file from a directory that was specified', function () {
+			sandbox.stub(unfold, 'processFile');
+			grunt.file.exists.returns(true);
+			grunt.file.isDir.returns(true);
+
+			unfold.processFiles([
+				{ src: ['my/file1.html'], dest: 'my/path' }
+			]);
+
+			expect(unfold.processFile).to.have.been.calledWith('my/file1.html', sinon.match(/my[\\\/]path[\\\/]my[\\\/]file1.html/));
 		});
 
 	});
@@ -61,18 +98,26 @@ describe('unfold', function () {
 			grunt.file.read.returns('original content');
 		});
 
-		it('not write the file if it did not change', function () {
+		it('should not write the file if it is the same as the original and it did not change', function () {
 			sandbox.stub(unfold, 'processContent').returns('original content');
 
-			unfold.processFile('filepath');
+			unfold.processFile('filepath', 'filepath');
 
 			expect(grunt.file.write).not.to.have.been.called;
+		});
+
+		it('should write the file if it not the same as the original and it did not change', function () {
+			sandbox.stub(unfold, 'processContent').returns('original content');
+
+			unfold.processFile('filepath1', 'filepath2');
+
+			expect(grunt.file.write).to.have.been.called;
 		});
 
 		it('overwrite the file if it was modified', function () {
 			sandbox.stub(unfold, 'processContent').returns('new content');
 
-			unfold.processFile('path/to/file.html');
+			unfold.processFile('path/to/file.html', 'path/to/file.html');
 
 			expect(grunt.file.write).to.have.been.calledWith('path/to/file.html', 'new content');
 		});
@@ -81,7 +126,7 @@ describe('unfold', function () {
 			sandbox.stub(unfold, 'processContent');
 			grunt.file.read.withArgs('path/to/file.html').returns('file content');
 
-			unfold.processFile('path/to/file.html');
+			unfold.processFile('path/to/file.html', 'path/to/output.html');
 
 			expect(unfold.processContent).to.have.been.calledWith('path/to', 'file content');
 		});
