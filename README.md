@@ -45,19 +45,38 @@ grunt.initConfig({
 		}
       }
     },
-    files: ['index.html']
+    files: {
+      src: 'index.html'
+    }
   },
 })
 ```
 
 ### Usage Example
 
-#### In "Gruntfile.js"
+#### In "Gruntfile.js", to overwrite the file
 
 ```js
 grunt.initConfig({
   unfold: {
-    files: ['index.html'] // Which html files to process
+    files: {
+      src: 'index.html'
+	}
+  },
+})
+```
+
+#### In "Gruntfile.js", to write to another file
+
+Keep in mind that you can also provide a globbing pattern as the source and a folder as the destination.
+
+```js
+grunt.initConfig({
+  unfold: {
+    files: {
+      src: 'src/index.html',
+	  dest: 'dist/index.html'
+	}
   },
 })
 ```
@@ -67,13 +86,13 @@ grunt.initConfig({
 ```html
 <html>
   <head>
-    <!-- unfold:css style/*.css -->
-	This will be overwritten
+    <!-- unfold:css {style,css}/*.css -->
+	This will be overwritten by all css files in style/*.css and css/*.css
 	<!-- /unfold -->
   </head>
   <body>
-    <!-- unfold:js scripts/*.js -->
-	This will be overwritten
+    <!-- unfold:js scripts/**/*.js -->
+	This will be overwritten by all .js files in scripts/ and its subfolders
 	<!-- /unfold -->
   </body>
 </html>
