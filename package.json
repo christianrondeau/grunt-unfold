@@ -32,7 +32,10 @@
     "grunt",
     "insert",
     "script",
-    "index.html"
+    "index.html",
+    "html",
+    "css",
+    "list"
   ],
   "readmeFilename": "README.md",
   "license": "MIT"
