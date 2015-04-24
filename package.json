@@ -6,10 +6,7 @@
   "contributors": [
     "Christian Rondeau <christian.rondeau@gmail.com>"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/christianrondeau/grunt-unfold.git"
-  },
+  "repository": "christianrondeau/grunt-unfold",
   "main": "tasks/unfold.js",
   "engines": {
     "node": ">= 0.8.0"
