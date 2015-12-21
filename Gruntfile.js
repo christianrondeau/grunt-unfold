@@ -94,6 +94,10 @@ module.exports = function (grunt) {
 		'mochaTest',
 		'test-real'
 	]);
+	
+	grunt.registerTask('travis', [
+		'test'
+	]);
 
 	grunt.registerTask('default', [
 		'test'
