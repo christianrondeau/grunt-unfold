@@ -2,6 +2,8 @@
 
 > Inserts script tags based on a folder path or file pattern
 
+[![Build Status](https://travis-ci.org/christianrondeau/grunt-unfold.svg?branch=master)](https://travis-ci.org/christianrondeau/grunt-unfold)
+
 ## Getting Started
 
 If you haven't used [Grunt](http://gruntjs.com/) before, be sure to check out the [Getting Started](http://gruntjs.com/getting-started) guide, as it explains how to create a [Gruntfile](http://gruntjs.com/sample-gruntfile) as well as install and use Grunt plugins. Once you're familiar with that process, you may install this plugin with this command:
