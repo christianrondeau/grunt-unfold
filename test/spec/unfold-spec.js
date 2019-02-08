@@ -11,7 +11,7 @@ describe('unfold', function () {
 	var sandbox, grunt, options, unfold;
 
 	beforeEach(function () {
-		sandbox = sinon.sandbox.create();
+		sandbox = sinon.createSandbox();
 
 		grunt = {
 			file: {

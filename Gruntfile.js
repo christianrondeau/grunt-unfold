@@ -62,7 +62,7 @@ module.exports = function (grunt) {
 				options: {
 					reporter: 'spec',
 					clearRequireCache: true,
-					growl: true
+					//growl: true
 				},
 				src: ['test/spec/*-spec.js']
 			}
