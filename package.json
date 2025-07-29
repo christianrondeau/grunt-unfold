@@ -15,7 +15,7 @@
     "test": "grunt test"
   },
   "devDependencies": {
-    "chai": "^4.3.7",
+    "chai": "^5.2.1",
     "grunt": "^1.6.1",
     "grunt-contrib-clean": "^2.0.1",
     "grunt-contrib-copy": "^1.0.0",
@@ -24,9 +24,9 @@
     "grunt-mocha-test": "^0.13.3",
     "load-grunt-tasks": "^5.1.0",
     "lodash": "^4.17.21",
-    "mocha": "^10.2.0",
-    "sinon": "^15.0.3",
-    "sinon-chai": "^3.7.0"
+    "mocha": "^11.7.1",
+    "sinon": "^21.0.0",
+    "sinon-chai": "^4.0.0"
   },
   "keywords": [
     "gruntplugin",

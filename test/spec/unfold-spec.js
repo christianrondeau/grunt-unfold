@@ -1,17 +1,18 @@
 'use strict';
 
-var chai = require('chai');
-var sinon = require('sinon');
-chai.use(require('sinon-chai'));
-var expect = chai.expect;
+import { use, expect as _expect } from 'chai';
+import { createSandbox, match } from 'sinon';
+import sinonChai from 'sinon-chai';
+use(sinonChai);
+var expect = _expect;
 
-var unfoldCtor = require('../../tasks/unfold.js');
+import unfoldCtor from '../../tasks/unfold.js';
 
 describe('unfold', function () {
 	var sandbox, grunt, options, unfold;
 
 	beforeEach(function () {
-		sandbox = sinon.createSandbox();
+		sandbox = createSandbox();
 
 		grunt = {
 			file: {
@@ -87,7 +88,7 @@ describe('unfold', function () {
 				{ src: ['my/file1.html'], dest: 'my/path' }
 			]);
 
-			expect(unfold.processFile).to.have.been.calledWith('my/file1.html', sinon.match(/my[\\\/]path[\\\/]my[\\\/]file1.html/));
+			expect(unfold.processFile).to.have.been.calledWith('my/file1.html', match(/my[\\\/]path[\\\/]my[\\\/]file1.html/));
 		});
 
 	});
